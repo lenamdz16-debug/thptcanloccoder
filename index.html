@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>THPT CAN LOC CODER: learn C++ by watching it run</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{--bg:#F5F7FB;--surface:#fff;--ink:#14213D;--muted:#55627C;--line:#D6DCE8;--accent:#2447F5;--accent-ink:#fff;--hi:#FFE08A;--ok:#0F8A78;
+--code:#0E1630;--code-ink:#E7ECFF;--code-hi:#2B3A78;
+--head:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;--body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D1324;--surface:#151D35;--ink:#E9EEFB;--muted:#9AA7C4;--line:#27324F;--accent:#8CA2FF;--accent-ink:#0D1324;--hi:#6B5A14;--ok:#4FD1B8;--code:#080D1E}}
+:root[data-theme="dark"]{--bg:#0D1324;--surface:#151D35;--ink:#E9EEFB;--muted:#9AA7C4;--line:#27324F;--accent:#8CA2FF;--accent-ink:#0D1324;--hi:#6B5A14;--ok:#4FD1B8;--code:#080D1E}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 var(--body)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+.brand{font:800 1.25rem var(--head);letter-spacing:-.01em}
+nav a{color:var(--muted);text-decoration:none;margin-left:18px}
+nav a:hover{color:var(--ink)}
+.hr{display:flex;align-items:center}
+#lang{margin-left:18px;font:inherit;font-size:.95rem;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1{font:800 clamp(2.1rem,5.5vw,3.6rem)/1.05 var(--head);letter-spacing:-.025em;margin:28px 0 14px;max-width:16ch}
+h2{font:700 clamp(1.5rem,3.5vw,2.1rem)/1.15 var(--head);letter-spacing:-.015em;margin:0 0 8px}
+.lede{color:var(--muted);max-width:60ch;margin:0 0 28px}
+section{padding:44px 0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.track{display:flex;gap:0;border-bottom:1px solid var(--line);overflow-x:auto}
+.track button{flex:1 0 auto;min-width:104px;padding:14px 12px;background:none;border:0;border-right:1px solid var(--line);color:var(--muted);font:700 .95rem var(--head);cursor:pointer;text-align:left}
+.track button:last-child{border-right:0}
+.track button small{display:block;font:400 .78rem var(--body)}
+.track button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.stage>div{padding:22px}
+.stage .txt{border-right:1px solid var(--line)}
+.stage h3{font:700 1.3rem var(--head);margin:0 0 6px}
+.cmd{display:inline-block;font:600 .9rem var(--mono);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:3px 9px;margin:8px 0}
+pre{margin:0;background:var(--code);color:var(--code-ink);font:400 .9rem/1.65 var(--mono);padding:16px 0;overflow-x:auto;border-radius:10px}
+pre .ln{display:block;padding:0 16px;white-space:pre;min-height:1.65em}
+pre .ln.on{background:var(--code-hi);box-shadow:inset 3px 0 0 var(--hi)}
+.ctl{display:flex;gap:10px;align-items:center;padding:14px 22px;border-top:1px solid var(--line)}
+.btn{font:700 .95rem var(--head);padding:9px 16px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn.ghost{background:none;color:var(--accent)}
+.btn[disabled]{opacity:.4;cursor:default}
+.ctl .note{margin-left:auto;color:var(--muted);font-size:.9rem}
+.mem{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.mem>div{padding:22px}
+.mem .left{border-right:1px solid var(--line)}
+.cell{display:grid;grid-template-columns:70px 1fr auto;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;background:var(--bg);transition:background .25s,border-color .25s}
+.cell.new,.cell.chg{border-color:var(--accent);background:var(--hi)}
+.cell b{font:700 1.05rem var(--mono)}
+.cell .v{font:600 1.35rem var(--mono)}
+.cell .ad{font:400 .78rem var(--mono);color:var(--muted)}
+.cell .tag{grid-column:1/-1;font-size:.85rem;color:var(--muted)}
+.cell .tag:empty{display:none}
+.explain{min-height:3.2em;color:var(--ink)}
+.road{list-style:none;margin:0;padding:0;counter-reset:s;border-left:2px solid var(--line);margin-left:14px}
+.road>li{counter-increment:s;position:relative;padding:0 0 18px 30px}
+.road>li::before{content:counter(s);position:absolute;left:-15px;top:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:700 .9rem/28px var(--head);text-align:center}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 16px}
+summary{cursor:pointer;padding:14px 0;font:700 1.1rem var(--head);list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary span{font:400 .9rem var(--body);color:var(--muted);white-space:nowrap}
+details[open] summary{border-bottom:1px solid var(--line)}
+.steps{margin:0;padding:10px 0 14px}
+.steps label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer}
+.steps input{margin-top:.4em;width:18px;height:18px;accent-color:var(--accent)}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;max-width:360px;margin:6px 0 24px}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+footer{padding:30px 0 50px;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+@media (max-width:760px){.stage,.mem{grid-template-columns:1fr}.stage .txt,.mem .left{border-right:0;border-bottom:1px solid var(--line)}nav{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="brand">THPT CAN LOC CODER</div><div class="hr"><nav><a href="#pipeline" data-i18n="nav1">Build process</a><a href="#memory" data-i18n="nav2">Memory</a><a href="#path" data-i18n="nav3">Learning path</a></nav><select id="lang" aria-label="Language"></select></div></header>
+
+<section style="padding-top:20px">
+<h1 data-i18n="h1">Watch what C++ does with every line you write.</h1>
+<p class="lede" data-i18n="l1">Most C++ confusion comes from things you can’t see: what the compiler produces and where your variables live. Step through both below, then follow a six-stage path from first program to classes.</p>
+
+<div id="pipeline" class="panel">
+<div class="track" role="tablist" aria-label="Build stages" id="track"></div>
+<div class="stage">
+<div class="txt"><h3 id="pt"></h3><p id="pd" style="margin:0"></p><span class="cmd" id="pc"></span><p id="pw" style="color:var(--muted);font-size:.95rem;margin:6px 0 0"></p></div>
+<div><pre id="pcode" aria-live="polite"></pre></div>
+</div>
+<div class="ctl"><button class="btn ghost" id="pp">Back</button><button class="btn" id="pn">Next stage</button><span class="note" id="pnote"></span></div>
+</div>
+</section>
+
+<section id="memory">
+<h2 data-i18n="h2m">See your variables in memory</h2>
+<p class="lede" data-i18n="l2">Each variable is a labeled box at an address. Step through the code and watch values change, and see what a pointer really holds.</p>
+<div class="panel">
+<div class="mem">
+<div class="left"><pre id="mcode"></pre></div>
+<div><div id="cells"></div><p class="explain" id="mex"></p></div>
+</div>
+<div class="ctl"><button class="btn ghost" id="mp">Back</button><button class="btn" id="mn">Run next line</button><button class="btn ghost" id="mr">Restart</button><span class="note" id="mnote"></span></div>
+</div>
+</section>
+
+<section id="path">
+<h2 data-i18n="h2p">Your learning path</h2>
+<p class="lede" data-i18n="l3">Finish each step before moving on. Your progress is saved in this browser.</p>
+<div class="bar" role="progressbar" aria-label="Course progress" aria-valuemin="0" aria-valuemax="100" id="pbar"><i></i></div>
+<ol class="road" id="road"></ol>
+</section>
+<footer data-i18n="ft">Examples use the GCC toolchain (g++). Clang and MSVC behave the same for these lessons.</footer>
+</div>
+
+<script>
+const P=[
+{n:"Write",s:"hello.cpp",t:"You write source code",d:"A .cpp file is plain text. Nothing runs yet: the computer can’t read this directly.",c:"nano hello.cpp",w:"Every C++ program starts at main().",
+ code:['#include <iostream>','','int main() {','  std::cout << "Hello, C++!\\n";','  return 0;','}'],hi:[3]},
+{n:"Preprocess",s:"g++ -E",t:"The preprocessor pastes in headers",d:"Lines starting with # are instructions to a text-processing step. #include copies the whole header file into your file.",c:"g++ -E hello.cpp",w:"Your 6 lines become thousands.",
+ code:['// ...about 30,000 lines from <iostream>...','namespace std {','  extern ostream cout;','  // ...','}','','int main() {','  std::cout << "Hello, C++!\\n";','  return 0;','}'],hi:[2]},
+{n:"Compile",s:"g++ -c",t:"The compiler translates to machine steps",d:"Your C++ is checked against the language rules, then turned into processor instructions. Syntax and type errors appear here.",c:"g++ -c hello.cpp",w:"Simplified assembly shown. Output file: hello.o",
+ code:['main:','  push rbp','  mov  rbp, rsp','  lea  rsi, [.LC0]   ; the text','  call operator<<    ; print it','  mov  eax, 0        ; return 0','  pop  rbp','  ret'],hi:[3,4]},
+{n:"Link",s:"g++ -o",t:"The linker connects the pieces",d:"hello.o calls std::cout, but the code for it lives in a library. The linker joins them into one program. “Undefined reference” errors appear here.",c:"g++ hello.o -o hello",w:"Compile errors and link errors are different problems.",
+ code:['hello.o       your main()','libstdc++     where std::cout lives','libc          startup and exit code','      |','      v','hello         one runnable program'],hi:[1]},
+{n:"Run",s:"./hello",t:"The operating system runs it",d:"Now the program is loaded into memory and main() starts executing, one statement at a time.",c:"./hello",w:"Change the source and repeat from step 1.",
+ code:['$ ./hello','Hello, C++!','$ echo $?','0'],hi:[1,3]}];
+const LANGS={en:'English',es:'Español',vi:'Tiếng Việt'};
+const TR={
+es:{ui:{nav1:'Proceso de compilación',nav2:'Memoria',nav3:'Ruta de aprendizaje',h1:'Mira qué hace C++ con cada línea que escribes.',l1:'La mayor parte de la confusión en C++ viene de lo que no se ve: qué produce el compilador y dónde viven tus variables. Recorre ambas cosas abajo y luego sigue una ruta de seis etapas, del primer programa a las clases.',h2m:'Mira tus variables en la memoria',l2:'Cada variable es una caja con nombre y una dirección. Avanza por el código y observa cómo cambian los valores y qué guarda realmente un puntero.',h2p:'Tu ruta de aprendizaje',l3:'Completa cada paso antes de seguir. Tu progreso se guarda en este navegador.',ft:'Los ejemplos usan GCC (g++). Clang y MSVC se comportan igual en estas lecciones.','Back':'Atrás','Next stage':'Siguiente etapa','Run it':'Ejecutar','Stage {0} of {1}':'Etapa {0} de {1}','Run next line':'Ejecutar siguiente línea','Restart':'Reiniciar','Line {0} of {1}':'Línea {0} de {1}','{0}/{1} done · {2}':'{0}/{1} hechos · {2}','points to a':'apunta a la variable a','changed through p':'cambiado mediante p','recomputed from a':'recalculado desde a'},
+P:[{n:'Escribir',t:'Escribes el código fuente',d:'Un archivo .cpp es texto plano. Todavía no se ejecuta nada: el ordenador no puede leerlo directamente.',w:'Todo programa en C++ empieza en main().'},{n:'Preprocesar',t:'El preprocesador pega las cabeceras',d:'Las líneas que empiezan con # son instrucciones para un paso que procesa texto. #include copia el archivo de cabecera entero dentro del tuyo.',w:'Tus 6 líneas se convierten en miles.'},{n:'Compilar',t:'El compilador traduce a instrucciones de máquina',d:'Tu C++ se comprueba según las reglas del lenguaje y se convierte en instrucciones del procesador. Aquí aparecen los errores de sintaxis y de tipos.',w:'Ensamblador simplificado. Archivo de salida: hello.o'},{n:'Enlazar',t:'El enlazador conecta las piezas',d:'hello.o llama a std::cout, pero su código está en una biblioteca. El enlazador las une en un solo programa. Los errores «undefined reference» aparecen aquí.',w:'Los errores de compilación y de enlace son problemas distintos.'},{n:'Ejecutar',t:'El sistema operativo lo ejecuta',d:'Ahora el programa se carga en memoria y main() empieza a ejecutarse, una instrucción a la vez.',w:'Cambia el código fuente y repite desde el paso 1.'}],
+M:['Todavía no se ha ejecutado nada. Pulsa «Ejecutar siguiente línea».','Reserva una caja de 4 bytes llamada a, con su propia dirección, y guarda un 5.','Lee a (5), multiplica y guarda 10 en otra caja distinta.','p es una caja que guarda una dirección, no un número. &a significa «la dirección de a».','*p significa «la caja a la que apunta p». Al escribir a través de ella cambió a, aunque no se nombró a.','b recibe 9 + 1. El 10 anterior se sobrescribe. Las cajas solo conservan su último valor.'],
+R:[{t:'Configurar y ejecutar',m:'30 min',s:['Instala un compilador (g++, clang o Visual Studio)','Escribe y compila hello.cpp con el proceso de arriba','Cambia el mensaje, recompila y ejecuta de nuevo','Rómpelo a propósito (borra un punto y coma) y lee el error']},{t:'Valores y memoria',m:'1 h',s:['Declara variables int, double, char, bool y std::string','Usa const para valores que no deben cambiar','Recorre el visor de memoria y predice cada valor antes','Imprime cada variable con std::cout']},{t:'Decisiones y bucles',m:'1,5 h',s:['Escribe una cadena if / else if / else','Escribe un bucle for que sume del 1 al 10','Sigue un bucle while en papel, iteración por iteración','Resuelve FizzBuzz sin consultar nada']},{t:'Funciones',m:'1,5 h',s:['Divide un programa en dos funciones con parámetros y valor de retorno','Pasa un int por valor y comprueba que el original no cambia','Pasa un int por referencia (int&) y comprueba que cambia','Declara una función sobre main() y defínela debajo']},{t:'Punteros y referencias',m:'2 h',s:['Obtén una dirección con & e imprímela','Lee y escribe a través de un puntero con *','Inicializa punteros a nullptr y comprueba antes de usarlos','Explica en una frase la diferencia entre puntero y referencia']},{t:'Clases y biblioteca estándar',m:'3 h',s:['Escribe un struct con dos campos y una función que lo use','Añade un constructor y una función miembro','Guarda valores en un std::vector y recórrelos','Construye un proyecto pequeño: una lista de tareas en la terminal']}]},
+vi:{ui:{nav1:'Quy trình biên dịch',nav2:'Bộ nhớ',nav3:'Lộ trình học',h1:'Xem C++ xử lý từng dòng bạn viết như thế nào.',l1:'Phần lớn sự khó hiểu của C++ đến từ những thứ không nhìn thấy: trình biên dịch tạo ra gì và biến của bạn nằm ở đâu. Hãy xem từng bước cả hai bên dưới, rồi theo lộ trình sáu giai đoạn từ chương trình đầu tiên đến lớp (class).',h2m:'Xem biến của bạn trong bộ nhớ',l2:'Mỗi biến là một hộp có tên và một địa chỉ. Chạy từng dòng mã để xem giá trị thay đổi và con trỏ thực sự lưu gì.',h2p:'Lộ trình học của bạn',l3:'Hoàn thành từng bước trước khi chuyển tiếp. Tiến độ được lưu trong trình duyệt này.',ft:'Ví dụ dùng GCC (g++). Clang và MSVC hoạt động giống nhau trong các bài này.','Back':'Quay lại','Next stage':'Giai đoạn tiếp','Run it':'Chạy','Stage {0} of {1}':'Giai đoạn {0}/{1}','Run next line':'Chạy dòng tiếp','Restart':'Làm lại','Line {0} of {1}':'Dòng {0}/{1}','{0}/{1} done · {2}':'Xong {0}/{1} · {2}','points to a':'trỏ tới a','changed through p':'đổi qua p','recomputed from a':'tính lại từ a'},
+P:[{n:'Viết',t:'Bạn viết mã nguồn',d:'Tệp .cpp chỉ là văn bản thuần. Chưa có gì chạy cả: máy tính không đọc trực tiếp được nó.',w:'Mọi chương trình C++ bắt đầu từ main().'},{n:'Tiền xử lý',t:'Bộ tiền xử lý dán các tệp header vào',d:'Các dòng bắt đầu bằng # là chỉ thị cho một bước xử lý văn bản. #include sao chép toàn bộ tệp header vào tệp của bạn.',w:'6 dòng của bạn thành hàng nghìn dòng.'},{n:'Biên dịch',t:'Trình biên dịch dịch sang lệnh máy',d:'Mã C++ được kiểm tra theo quy tắc của ngôn ngữ rồi chuyển thành lệnh cho bộ xử lý. Lỗi cú pháp và lỗi kiểu xuất hiện ở bước này.',w:'Hợp ngữ đã được đơn giản hóa. Tệp đầu ra: hello.o'},{n:'Liên kết',t:'Trình liên kết nối các phần lại',d:'hello.o gọi std::cout, nhưng mã của nó nằm trong một thư viện. Trình liên kết ghép chúng thành một chương trình. Lỗi «undefined reference» xuất hiện ở bước này.',w:'Lỗi biên dịch và lỗi liên kết là hai loại vấn đề khác nhau.'},{n:'Chạy',t:'Hệ điều hành chạy chương trình',d:'Lúc này chương trình được nạp vào bộ nhớ và main() bắt đầu thực thi, từng câu lệnh một.',w:'Sửa mã nguồn rồi lặp lại từ bước 1.'}],
+M:['Chưa có gì chạy. Nhấn «Chạy dòng tiếp».','Cấp một hộp 4 byte tên a, có địa chỉ riêng, và lưu số 5 vào đó.','Đọc a (5), nhân đôi và lưu 10 vào một hộp riêng khác.','p là hộp chứa một địa chỉ, không phải một số. &a nghĩa là «địa chỉ của a».','*p nghĩa là «hộp mà p trỏ tới». Ghi qua nó làm a thay đổi, dù a không được nhắc tên.','b nhận 9 + 1. Giá trị 10 cũ bị ghi đè. Mỗi hộp chỉ giữ giá trị mới nhất.'],
+R:[{t:'Cài đặt và chạy',m:'30 phút',s:['Cài trình biên dịch (g++, clang hoặc Visual Studio)','Viết và biên dịch hello.cpp theo quy trình ở trên','Đổi thông điệp, biên dịch lại và chạy lại','Cố tình làm hỏng (xóa một dấu chấm phẩy) và đọc thông báo lỗi']},{t:'Giá trị và bộ nhớ',m:'1 giờ',s:['Khai báo biến int, double, char, bool và std::string','Dùng const cho giá trị không được thay đổi','Chạy từng bước trong trình xem bộ nhớ và đoán trước mỗi giá trị','In từng biến bằng std::cout']},{t:'Rẽ nhánh và vòng lặp',m:'1,5 giờ',s:['Viết chuỗi if / else if / else','Viết vòng for tính tổng từ 1 đến 10','Theo dõi vòng while trên giấy, từng lần lặp','Giải FizzBuzz mà không tra cứu']},{t:'Hàm',m:'1,5 giờ',s:['Tách chương trình thành hai hàm có tham số và giá trị trả về','Truyền int theo giá trị và thấy bản gốc không đổi','Truyền int theo tham chiếu (int&) và thấy nó thay đổi','Khai báo hàm phía trên main() và định nghĩa phía dưới']},{t:'Con trỏ và tham chiếu',m:'2 giờ',s:['Lấy địa chỉ bằng & và in ra','Đọc và ghi qua con trỏ bằng *','Khởi tạo con trỏ là nullptr và kiểm tra trước khi dùng','Giải thích trong một câu khác biệt giữa con trỏ và tham chiếu']},{t:'Lớp và thư viện chuẩn',m:'3 giờ',s:['Viết struct có hai trường và một hàm dùng nó','Thêm hàm khởi tạo và một hàm thành viên','Lưu giá trị vào std::vector và duyệt qua','Làm dự án nhỏ: danh sách việc cần làm trên terminal']}]}
+};
+let lang='en';try{lang=localStorage.getItem('cpp-lang')||(navigator.language||'en').slice(0,2)}catch(e){}
+if(!LANGS[lang])lang='en';
+const u=k=>(TR[lang]&&TR[lang].ui[k])||k;
+const gp=i=>Object.assign({},P[i],(TR[lang]&&TR[lang].P||[])[i]);
+const gm=i=>(TR[lang]&&TR[lang].M||[])[i]||MS[i].x;
+const gr=i=>Object.assign({},R[i],(TR[lang]&&TR[lang].R||[])[i]);
+let pi=0;const $=id=>document.getElementById(id);
+function lines(el,arr,hi){el.innerHTML='';arr.forEach((l,i)=>{const s=document.createElement('span');s.className='ln'+(hi.includes(i)?' on':'');s.textContent=l;el.appendChild(s)})}
+function drawP(){P.forEach((p,i)=>{const b=$('track').children[i];b.setAttribute('aria-selected',i===pi);b.firstChild.textContent=gp(i).n});const p=gp(pi);
+$('pt').textContent=p.t;$('pd').textContent=p.d;$('pc').textContent=p.c;$('pw').textContent=p.w;lines($('pcode'),p.code,p.hi);
+$('pp').disabled=pi===0;$('pn').disabled=pi===P.length-1;$('pn').textContent=u(pi===P.length-2?'Run it':'Next stage');$('pnote').textContent=u('Stage {0} of {1}').replace('{0}',pi+1).replace('{1}',P.length)}
+P.forEach((p,i)=>{const b=document.createElement('button');b.setAttribute('role','tab');b.innerHTML='';b.append(p.n);const sm=document.createElement('small');sm.textContent=p.s;b.append(sm);b.onclick=()=>{pi=i;drawP()};$('track').appendChild(b)});
+$('pp').onclick=()=>{pi--;drawP()};$('pn').onclick=()=>{pi++;drawP()};drawP();
+
+const MC=['int a = 5;','int b = a * 2;','int* p = &a;','*p = 9;','b = a + 1;'];
+const A={a:'0x7ffc10',b:'0x7ffc14',p:'0x7ffc18'};
+const MS=[
+{v:{},x:'Nothing has run yet. Press “Run next line”.'},
+{v:{a:['5','new','']},x:'Reserves a 4-byte box named a at its own address and stores 5.'},
+{v:{a:['5','',''],b:['10','new','']},x:'Reads a (5), multiplies, and stores 10 in a separate box.'},
+{v:{a:['5','',''],b:['10','',''],p:['0x7ffc10','new','points to a']},x:'p is a box that holds an address, not a number. &a means “the address of a”.'},
+{v:{a:['9','chg','changed through p'],b:['10','',''],p:['0x7ffc10','','points to a']},x:'*p means “the box p points to”. Writing through it changed a, even though a was never named.'},
+{v:{a:['9','',''],b:['10','chg','recomputed from a'],p:['0x7ffc10','','points to a']},x:'b gets 9 + 1. The old 10 is overwritten. Boxes keep only their latest value.'}];
+let mi=0;
+function drawM(){lines($('mcode'),MC,mi>0?[mi-1]:[]);const c=$('cells');c.innerHTML='';
+for(const k of Object.keys(MS[mi].v)){const [v,st,tg]=MS[mi].v[k];const d=document.createElement('div');d.className='cell '+st;
+const n=document.createElement('b');n.textContent=k;const val=document.createElement('span');val.className='v';val.textContent=v;const ad=document.createElement('span');ad.className='ad';ad.textContent=A[k];const t=document.createElement('span');t.className='tag';t.textContent=u(tg);d.append(n,val,ad,t);c.appendChild(d)}
+$('mex').textContent=gm(mi);$('mp').disabled=mi===0;$('mn').disabled=mi===MC.length;$('mnote').textContent=u('Line {0} of {1}').replace('{0}',mi).replace('{1}',MC.length)}
+$('mn').onclick=()=>{mi++;drawM()};$('mp').onclick=()=>{mi--;drawM()};$('mr').onclick=()=>{mi=0;drawM()};drawM();
+
+const R=[
+{t:"Set up and run",m:"30 min",s:["Install a compiler (g++, clang, or Visual Studio)","Write and compile hello.cpp from the build process above","Change the message, recompile, and run again","Break it on purpose (delete a semicolon) and read the error"]},
+{t:"Values and memory",m:"1 hr",s:["Declare int, double, char, bool, and std::string variables","Use const for values that must not change","Step through the memory viewer and predict each value first","Print each variable with std::cout"]},
+{t:"Decisions and loops",m:"1.5 hrs",s:["Write an if / else if / else chain","Write a for loop that sums 1 to 10","Trace a while loop on paper, one iteration at a time","Solve FizzBuzz without looking anything up"]},
+{t:"Functions",m:"1.5 hrs",s:["Split a program into two functions with parameters and a return value","Pass an int by value and see the original stay unchanged","Pass an int by reference (int&) and see it change","Declare a function above main() and define it below"]},
+{t:"Pointers and references",m:"2 hrs",s:["Take an address with & and print it","Read and write through a pointer with *","Initialize pointers to nullptr and check before using them","Explain in one sentence the difference between a pointer and a reference"]},
+{t:"Classes and the standard library",m:"3 hrs",s:["Write a struct with two fields and a function that uses it","Add a constructor and one member function","Store values in a std::vector and loop over it","Build a small project: a to-do list in the terminal"]}];
+let done={};try{done=JSON.parse(localStorage.getItem('cpp-done')||'{}')}catch(e){}
+const total=R.reduce((a,r)=>a+r.s.length,0);
+function prog(){const n=Object.values(done).filter(Boolean).length;const b=$('pbar');b.firstElementChild.style.width=(n/total*100)+'%';b.setAttribute('aria-valuenow',Math.round(n/total*100));
+R.forEach((r,i)=>{const k=r.s.filter((_,j)=>done['s'+i+'-'+j]).length;const el=document.getElementById('c'+i);if(el)el.textContent=u('{0}/{1} done · {2}').replace('{0}',k).replace('{1}',r.s.length).replace('{2}',gr(i).m)})}
+function buildRoad(){const open=[...$('road').querySelectorAll('details')].map(x=>x.open);$('road').innerHTML='';
+R.forEach((r0,i)=>{const r=gr(i);const li=document.createElement('li');const d=document.createElement('details');if(open.length?open[i]:i===0)d.open=true;
+const sm=document.createElement('summary');sm.append(r.t);const sp=document.createElement('span');sp.id='c'+i;sm.append(sp);d.append(sm);
+const box=document.createElement('div');box.className='steps';
+r.s.forEach((t,j)=>{const k='s'+i+'-'+j;const l=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!done[k];
+cb.onchange=()=>{done[k]=cb.checked;try{localStorage.setItem('cpp-done',JSON.stringify(done))}catch(e){}prog()};l.append(cb,t);box.append(l)});
+d.append(box);li.append(d);$('road').append(li)});prog()}
+function setLang(l){lang=l;try{localStorage.setItem('cpp-lang',l)}catch(e){}document.documentElement.lang=l;
+document.querySelectorAll('[data-i18n]').forEach(e=>{e.dataset.en=e.dataset.en||e.textContent;e.textContent=(TR[l]&&TR[l].ui[e.dataset.i18n])||e.dataset.en});
+$('pp').textContent=$('mp').textContent=u('Back');$('mn').textContent=u('Run next line');$('mr').textContent=u('Restart');$('lang').value=l;
+buildRoad();drawP();drawM()}
+const sel=$('lang');Object.keys(LANGS).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=LANGS[k];sel.append(o)});
+sel.onchange=()=>setLang(sel.value);setLang(lang);
+</script>
+</body>
+</html>
